@@ -1,4 +1,4 @@
-package com.apiproject.taskhandler
+package com.apiproject.taskhandler.user
 
 import org.springframework.data.repository.CrudRepository
 

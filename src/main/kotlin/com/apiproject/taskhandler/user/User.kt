@@ -1,4 +1,4 @@
-package com.apiproject.taskhandler
+package com.apiproject.taskhandler.user
 
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue

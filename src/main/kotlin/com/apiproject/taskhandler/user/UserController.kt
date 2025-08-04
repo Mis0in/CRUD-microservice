@@ -1,6 +1,5 @@
-package com.apiproject.taskhandler
+package com.apiproject.taskhandler.user
 
-import org.apache.coyote.Response
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -23,7 +22,7 @@ class UserController(@Autowired private val userRepository: UserRepository) {
 
     //Create user
     @PostMapping("")
-    fun createUser(user: User): ResponseEntity<User> {
+    fun createUser(@RequestBody user: User): ResponseEntity<User> {
         val createdUser = userRepository.save(user)
         return ResponseEntity(createdUser, HttpStatus.CREATED)
     }
