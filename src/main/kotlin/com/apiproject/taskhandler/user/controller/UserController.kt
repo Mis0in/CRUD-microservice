@@ -2,6 +2,8 @@ package com.apiproject.taskhandler.user.controller
 
 import com.apiproject.taskhandler.user.dto.User
 import com.apiproject.taskhandler.user.repository.UserRepository
+import com.apiproject.taskhandler.user.service.KafkaMessagePublisher
+import com.apiproject.taskhandler.user.service.events.UserEventType
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -16,7 +18,10 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/users")
-class UserController(@Autowired private val userRepository: UserRepository) {
+class UserController(
+    @Autowired private val userRepository: UserRepository,
+    @Autowired private val publisher: KafkaMessagePublisher
+) {
 
     //Get all users from database
     @GetMapping("")
@@ -26,6 +31,8 @@ class UserController(@Autowired private val userRepository: UserRepository) {
     @PostMapping("")
     fun createUser(@RequestBody user: User): ResponseEntity<User> {
         val createdUser = userRepository.save(user)
+        publisher.publishUserEvent(createdUser.id, UserEventType.CREATED)
+
         return ResponseEntity(createdUser, HttpStatus.CREATED)
     }
 
@@ -45,6 +52,8 @@ class UserController(@Autowired private val userRepository: UserRepository) {
         val found = userRepository.findById(userId)
         if (found.isPresent) {
             userRepository.save(User(userId, newUser.name, newUser.email))
+            publisher.publishUserEvent(userId, UserEventType.UPDATED)
+
             return ResponseEntity(HttpStatus.OK)
         } else {
             return ResponseEntity(HttpStatus.NOT_FOUND)
@@ -55,6 +64,8 @@ class UserController(@Autowired private val userRepository: UserRepository) {
     fun deleteUserById(@PathVariable userId: Long): ResponseEntity<User> {
         if (userRepository.existsById(userId)) {
             userRepository.deleteById(userId)
+            publisher.publishUserEvent(userId, UserEventType.DELETED)
+
             return ResponseEntity(HttpStatus.OK)
         } else {
             return ResponseEntity(HttpStatus.NOT_FOUND)
