@@ -4,8 +4,8 @@ import java.time.Instant
 import java.util.UUID
 
 data class UserEvent (
-    val eventId: String = UUID.randomUUID().toString(),
-    val userId: String,
-    val timestamp: Instant = Instant.now(),
+    override val eventId: String = UUID.randomUUID().toString(),
+    override val timestamp: Instant = Instant.now(),
+    val userId: Long,
     val eventType: UserEventType,
 ) : KafkaEvent

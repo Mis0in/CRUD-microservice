@@ -1,4 +1,9 @@
 package com.apiproject.taskhandler.user.service.events
 
-interface KafkaEvent {
+import java.time.Instant
+import java.util.UUID
+
+sealed interface KafkaEvent {
+    val eventId: String
+    val timestamp: Instant
 }
