@@ -1,5 +1,7 @@
-package com.apiproject.taskhandler.user
+package com.apiproject.taskhandler.user.controller
 
+import com.apiproject.taskhandler.user.dto.User
+import com.apiproject.taskhandler.user.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
