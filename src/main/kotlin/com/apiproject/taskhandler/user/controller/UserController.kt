@@ -16,6 +16,14 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
+
+/**
+ * REST Controller for handling user-related operations.
+ * Provides endpoints for CRUD operations on User entities and publishes corresponding events to Kafka.
+ *
+ * @property userRepository Repository for database operations on User entities
+ * @property publisher Service for publishing user events to Kafka
+ */
 @RestController
 @RequestMapping("/api/users")
 class UserController(
@@ -23,11 +31,21 @@ class UserController(
     @Autowired private val publisher: KafkaMessagePublisher
 ) {
 
-    //Get all users from database
+    /**
+     * Retrieves all users from the database.
+     *
+     * @return List of all User entities in the system
+     */
     @GetMapping("")
     fun getUsers(): List<User> = userRepository.findAll().toList()
 
-    //Create user
+    /**
+     * Creates a new user in the system.
+     * Publishes a USER_CREATED event to Kafka after successful creation.
+     *
+     * @param user User object to be created (received in request body)
+     * @return ResponseEntity containing the created User and HTTP 201 status on success
+     */
     @PostMapping("")
     fun createUser(@RequestBody user: User): ResponseEntity<User> {
         val createdUser = userRepository.save(user)
@@ -36,7 +54,13 @@ class UserController(
         return ResponseEntity(createdUser, HttpStatus.CREATED)
     }
 
-    //Get user by id
+    /**
+     * Retrieves a specific user by their ID.
+     *
+     * @param userId ID of the user to retrieve
+     * @return ResponseEntity containing the User and HTTP 200 status if found,
+     *         or HTTP 404 status if user doesn't exist
+     */
     @GetMapping("/{userId}")
     fun getUserById(@PathVariable userId: Long): ResponseEntity<User> {
         val user = userRepository.findById(userId)
@@ -47,6 +71,15 @@ class UserController(
         }
     }
 
+    /**
+     * Updates an existing user's information.
+     * Publishes a USER_UPDATED event to Kafka after successful update.
+     *
+     * @param userId ID of the user to update
+     * @param newUser User object containing new values (received in request body)
+     * @return ResponseEntity with HTTP 200 status if update was successful,
+     *         or HTTP 404 status if user doesn't exist
+     */
     @PutMapping("/{userId}")
     fun updateUserById(@PathVariable userId: Long, @RequestBody newUser: User): ResponseEntity<User> {
         val found = userRepository.findById(userId)
@@ -60,6 +93,14 @@ class UserController(
         }
     }
 
+    /**
+     * Deletes a user from the system.
+     * Publishes a USER_DELETED event to Kafka after successful deletion.
+     *
+     * @param userId ID of the user to delete
+     * @return ResponseEntity with HTTP 200 status if deletion was successful,
+     *         or HTTP 404 status if user doesn't exist
+     */
     @DeleteMapping("/{userId}")
     fun deleteUserById(@PathVariable userId: Long): ResponseEntity<User> {
         if (userRepository.existsById(userId)) {
