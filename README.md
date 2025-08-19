@@ -20,14 +20,14 @@
 | Инфраструктура  | Docker, Docker Compose              |
 
 ## Запуск проекта
-
-1. Клонировать репозиторий:
+1. Запустить docker daemon
+2. Клонировать репозиторий и запустить:  
    ```bash
    https://github.com/Mis0in/CRUD-microservice.git
    cd CRUD-microservice
    docker compose -f docker-compose.yml up --build
    ```
-2. API будет доступно на: `http://localhost:8080/api/users`
+3. API будет доступно на: `http://localhost:8080/api/users`
 
 ## API Endpoints
 
